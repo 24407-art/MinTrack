@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Site {
+  id                Int       @id @default(autoincrement())
+  name              String
+  code              String    @unique
+  mineral           String
+  region            String
+  coordinates       String
+  status            String    @default("active")
+  capacity          Int
+  currentProduction Int       @default(0)
+  workers           Int       @default(0)
+  equipmentCount    Int       @default(0)
+  startDate         String
+  area              String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  personnel         Personnel[]
+  equipmentItems    Equipment[]
+  productions       Production[]
+  reports           Report[]
+  shiftSites        ShiftSite[]
+}
+
+model Personnel {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String   @unique
+  phone       String?
+  position    String   // chef, adjoint, ouvrier
+  role        String   @default("ouvrier") // chef_equipe, adjoint, ouvrier
+  department  String
+  siteId      Int
+  teamId      Int?     // L'équipe à laquelle appartient
+  hireDate    String
+  salary      Decimal?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  team        Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+}
+
+model Team {
+  id          Int      @id @default(autoincrement())
+  name        String   // Équipe Alpha, Beta, etc.
+  code        String   @unique
+  siteId      Int
+  department  String   // extraction, forage, transport, etc.
+  shiftId     Int?     // Quart de travail associé
+  chefId      Int?     // Chef d'équipe
+  adjointId   Int?     // Adjoint
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  members     Personnel[]
+}
+
+model Equipment {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  model       String?
+  serial      String?  @unique
+  siteId      Int
+  status      String   @default("operational")
+  purchaseDate String?
+  lastMaintenance DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model Production {
+  id          Int      @id @default(autoincrement())
+  siteId      Int
+  date        DateTime
+  target      Int
+  actual      Int
+  unit        String   @default("tonnes")
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  title       String
+  type        String
+  content     String
+  siteId      Int?
+  authorId    Int?
+  date        DateTime
+  status      String   @default("draft")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  site        Site?    @relation(fields: [siteId], references: [id], onDelete: SetNull)
+}
+
+model Shift {
+  id          Int      @id @default(autoincrement())
+  name        String
+  startTime   String
+  endTime     String
+  workers     Int      @default(0)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  sites       ShiftSite[]
+}
+
+model ShiftSite {
+  id        Int      @id @default(autoincrement())
+  shiftId   Int
+  siteId    Int
+  createdAt DateTime @default(now())
+  
+  shift     Shift    @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  
+  @@unique([shiftId, siteId])
+}
+
+model PersonnelSchedule {
+  id          Int      @id @default(autoincrement())
+  personnelId Int
+  weekStart   DateTime
+  monday      String?
+  tuesday     String?
+  wednesday   String?
+  thursday    String?
+  friday      String?
+  saturday    String?
+  sunday      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  personnel   Personnel @relation(fields: [personnelId], references: [id], onDelete: Cascade)
+  
+  @@unique([personnelId, weekStart])
+}

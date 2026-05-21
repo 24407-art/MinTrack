@@ -1,0 +1,122 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{xcolor}
+
+\title{\textbf{Spécifications des Interfaces à Développer - MineTrack}}
+\author{Documentation Technique}
+\date{\today}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{MineTrack}
+\lhead{Interfaces UI/UX}
+\rfoot{Page \thepage}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}[\titlerule]
+
+\begin{document}
+
+
+\section{Introduction}
+Ce document détaille les interfaces utilisateur (UI) à développer pour le système \textbf{MineTrack}. Il définit les composants, les fonctionnalités et les interactions pour les plateformes Web et Mobile.
+
+\section{Interfaces Application Web (Administration)}
+
+\subsection{Tableau de Bord Global (Dashboard)}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Cartes de statistiques (Production totale, Effectif présent, Alertes actives).
+        \item Graphique linéaire (Évolution de la production hebdomadaire).
+        \item Liste des derniers incidents signalés avec indicateurs de couleur.
+    \end{itemize}
+    \item \textbf{Interactions :} Filtrage par site minier, survol des graphiques pour détails.
+\end{itemize}
+
+\subsection{Gestion du Personnel et Plannings}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Tableau de données (Nom, Rôle, Site, Statut).
+        \item Calendrier de shift interactif (Grille semaine/mois).
+        \item Formulaire de création/édition en modal.
+    \end{itemize}
+    \item \textbf{Fonctionnalités :} Recherche par matricule, assignation rapide de shift par drag-and-drop.
+\end{subsection}
+
+\subsection{Module de Rapports (Production \& Sécurité)}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Filtres multicritères (Date, Site, Type, Gravité).
+        \item Visionneuse de rapports détaillée.
+        \item Boutons d'exportation (PDF, Excel).
+    \end{itemize}
+\end{itemize}
+
+\section{Interfaces Application Mobile (Terrain)}
+
+\subsection{Écran de Pointage (Chef d'Équipe)}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Liste défilante des ouvriers assignés au shift.
+        \item Boutons d'action rapides (Check vert pour présent, Croix rouge pour absent, Horloge pour retard).
+        \item Badge indicateur pour les employés en repos (OFF).
+    \end{itemize}
+    \item \textbf{Interactions :} Recherche par nom, validation globale du shift.
+\end{itemize}
+
+\subsection{Saisie de Production}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Sélecteur de zone (Boutons segmentés).
+        \item Champs de saisie numérique (Tonnage, Nombre de camions).
+        \item Bouton de soumission haute visibilité.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Déclaration d'Incident}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Menu déroulant (Type d'incident).
+        \item Sélecteur de gravité visuel (Échelle colorée de Vert à Rouge).
+        \item Zone de texte pour description et localisation précise.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Planning Personnel (Ouvrier)}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Composants :}
+    \begin{itemize}
+        \item Vue hebdomadaire simplifiée.
+        \item Détails du shift (Heure, Zone, Équipement assigné).
+        \item Système de notifications intégré.
+    \end{itemize}
+\end{itemize}
+
+\section{Charte Graphique \& UX}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Couleurs de Gravité :}
+    \begin{itemize}
+        \item \textcolor{green}{Faible (Vert)}
+        \item \textcolor{yellow}{Moyen (Jaune)}
+        \item \textcolor{orange}{Élevé (Orange)}
+        \item \textcolor{red}{Critique (Rouge)}
+    \end{itemize}
+    \item \textbf{Mode Sombre/Clair :} Support natif sur les deux plateformes.
+    \item \textbf{Accessibilité :} Taille de police ajustable et contrastes élevés pour usage en extérieur.
+\end{itemize}
+
+\end{document}

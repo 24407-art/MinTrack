@@ -1,0 +1,165 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{array}
+\usepackage{longtable}
+
+\title{\textbf{User Stories Détaillées - Système MineTrack}}
+\author{Documentation du Projet}
+\date{\today}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{MineTrack}
+\lhead{User Stories}
+\rfoot{Page \thepage}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}[\titlerule]
+
+\begin{document}
+
+
+
+\section{Introduction}
+Ce document présente les \textit{User Stories} détaillées pour le système de gestion minière \textbf{MineTrack}. Le système se compose d'une application Web pour l'administration et le suivi global, et d'une application Mobile pour les opérations sur le terrain.
+
+\section{Acteurs du Système}
+\begin{itemize}[label=\textbullet]
+    \item \textbf{Administrateur :} Gère les sites, le personnel et les configurations globales (Web).
+    \item \textbf{Chef d'Équipe :} Supervise les opérations quotidiennes, le pointage et la production (Web \& Mobile).
+    \item \textbf{Ouvrier :} Consulte son planning et effectue son pointage (Mobile).
+\end{itemize}
+
+\section{User Stories - Application Web (Administration)}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-W01 : Gestion des Sites} \\ \hline
+\textbf{En tant que} & Administrateur \\ \hline
+\textbf{Je veux} & Créer, modifier et supprimer des sites miniers \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Pouvoir saisir le nom, le code unique, le minerai et les coordonnées.
+    \item Définir la capacité et le nombre de travailleurs.
+    \item Voir le statut (actif/inactif) de chaque site.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-W02 : Dashboard Global} \\ \hline
+\textbf{En tant que} & Administrateur / Chef d'Équipe \\ \hline
+\textbf{Je veux} & Visualiser les statistiques en temps réel de tous les sites \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Affichage de la production totale vs objectif.
+    \item Graphiques d'évolution mensuelle.
+    \item Alerte visuelle pour les incidents critiques.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-W03 : Gestion du Personnel} \\ \hline
+\textbf{En tant que} & Administrateur \\ \hline
+\textbf{Je veux} & Gérer les dossiers des employés et leurs affectations \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Enregistrer les informations personnelles et professionnelles.
+    \item Affecter un employé à un site et à une équipe spécifique.
+    \item Suivre la date d'embauche et le statut (actif/en congé).
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-W04 : Suivi de la Production} \\ \hline
+\textbf{En tant que} & Administrateur \\ \hline
+\textbf{Je veux} & Suivre et analyser les données de production de tous les sites \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Visualiser les tonnages extraits et le nombre de camions par site et par shift.
+    \item Comparer la production réelle par rapport aux objectifs fixés.
+    \item Filtrer les données de production par période (jour, semaine, mois).
+    \item Exporter les données de production sous format Excel ou PDF.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-W05 : Gestion des Rapports d'Incidents} \\ \hline
+\textbf{En tant que} & Administrateur \\ \hline
+\textbf{Je veux} & Gérer et traiter les rapports d'incidents envoyés depuis le terrain \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Centraliser tous les rapports d'incidents avec leur niveau de gravité.
+    \item Changer le statut d'un incident (Ouvert, En cours, Résolu, Clôturé).
+    \item Ajouter des commentaires ou des instructions de suivi sur un rapport.
+    \item Générer des rapports de sécurité périodiques.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\section{User Stories - Application Mobile (Opérations)}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-M01 : Pointage de l'Équipe par le Chef} \\ \hline
+\textbf{En tant que} & Chef d'Équipe \\ \hline
+\textbf{Je veux} & Valider la présence de tous les membres de mon équipe au début du shift \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Accéder à la liste complète des membres de l'équipe assignés au shift actuel.
+    \item Effectuer le pointage manuel pour chaque ouvrier (Présent, Absent, Retard).
+    \item Afficher les employés en repos (OFF) pour permettre leur rappel en cas de besoin.
+    \item Horodatage automatique de la validation effectuée par le Chef d'Équipe.
+    \item Possibilité de modifier le statut en cours de shift (ex: départ anticipé ou pause).
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-M02 : Saisie de Production} \\ \hline
+\textbf{En tant que} & Chef d'Équipe \\ \hline
+\textbf{Je veux} & Déclarer les quantités extraites durant mon shift \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Sélectionner la zone de travail.
+    \item Saisir le tonnage et le nombre de camions chargés.
+    \item Consulter l'historique des saisies de la journée.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-M03 : Déclaration d'Incident} \\ \hline
+\textbf{En tant que} & Chef d'Équipe / Ouvrier \\ \hline
+\textbf{Je veux} & Signaler immédiatement un incident de sécurité ou technique \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Choisir le type d'incident et définir le niveau de gravité selon l'échelle standard (Faible, Moyen, Élevé, Critique).
+    \item Saisir une description détaillée, la localisation précise et les éventuels dommages.
+    \item Associer une couleur visuelle au rapport en fonction de la gravité (Vert, Jaune, Orange, Rouge).
+    \item Envoi instantané d'une alerte prioritaire au dashboard web.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\begin{longtable}{|p{3cm}|p{12cm}|}
+\hline
+\textbf{ID} & \textbf{US-M04 : Consultation du Planning} \\ \hline
+\textbf{En tant que} & Ouvrier \\ \hline
+\textbf{Je veux} & Consulter mon planning hebdomadaire \\ \hline
+\textbf{Critères d'acceptation} & 
+\begin{itemize}[nosep, leftmargin=*]
+    \item Voir le shift assigné pour chaque jour de la semaine.
+    \item Connaître les équipements assignés et la zone de travail.
+    \item Recevoir des notifications en cas de changement.
+\end{itemize} \\ \hline
+\end{longtable}
+
+\end{document}

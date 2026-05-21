@@ -1,0 +1,305 @@
+{
+  "info": {
+    "_postman_id": "mintrack-api-collection",
+    "name": "MinTrack API Collection",
+    "description": "Collection Postman pour tester le backend MinTrack (code review). Base URL: http://localhost:8080/api",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\\n  \"username\": \"admin\",\\n  \"password\": \"password123\"\\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User (Me)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/auth/me"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/dashboard"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sites",
+      "item": [
+        { "name": "Get All Sites", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/sites" }, "response": [] },
+        { "name": "Get Site by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/sites/1" }, "response": [] },
+        {
+          "name": "Create Site",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/sites",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Site Test\",\\n  \"code\": \"ST001\",\\n  \"mineral\": \"Or\",\\n  \"region\": \"Nord\",\\n  \"coordinates\": \"12.34,56.78\",\\n  \"status\": \"active\",\\n  \"capacity\": 5000,\\n  \"currentProduction\": 1200,\\n  \"workers\": 45,\\n  \"equipmentCount\": 12,\\n  \"startDate\": \"2024-01-15\",\\n  \"area\": \"Zone A\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Site",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/sites/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Site Updated\",\\n  \"code\": \"ST001\",\\n  \"mineral\": \"Or\",\\n  \"region\": \"Nord\",\\n  \"coordinates\": \"12.34,56.78\",\\n  \"status\": \"active\",\\n  \"capacity\": 5000,\\n  \"currentProduction\": 1200,\\n  \"workers\": 45,\\n  \"equipmentCount\": 12,\\n  \"startDate\": \"2024-01-15\",\\n  \"area\": \"Zone A\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Site", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/sites/1" }, "response": [] }
+      ]
+    },
+    {
+      "name": "Equipment",
+      "item": [
+        { "name": "Get All Equipment", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/equipment" }, "response": [] },
+        { "name": "Get Equipment by Site", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/equipment?siteId=1" }, "response": [] },
+        { "name": "Get Equipment by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/equipment/1" }, "response": [] },
+        {
+          "name": "Create Equipment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/equipment",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Excavatrice X200\",\\n  \"type\": \"Excavation\",\\n  \"model\": \"CAT 320\",\\n  \"serial\": \"SN123456\",\\n  \"siteId\": 1,\\n  \"status\": \"operational\",\\n  \"purchaseDate\": \"2023-05-10\",\\n  \"lastMaintenance\": \"2024-03-01T10:00:00\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Equipment",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/equipment/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Excavatrice X200 Updated\",\\n  \"type\": \"Excavation\",\\n  \"model\": \"CAT 320\",\\n  \"serial\": \"SN123456\",\\n  \"siteId\": 1,\\n  \"status\": \"maintenance\",\\n  \"purchaseDate\": \"2023-05-10\",\\n  \"lastMaintenance\": \"2024-03-01T10:00:00\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Equipment", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/equipment/1" }, "response": [] }
+      ]
+    },
+    {
+      "name": "Personnel",
+      "item": [
+        { "name": "Get All Personnel", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel" }, "response": [] },
+        { "name": "Get Personnel by Site", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel?siteId=1" }, "response": [] },
+        { "name": "Get Personnel by Team", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel?teamId=1" }, "response": [] },
+        { "name": "Get Personnel by Department", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel?department=Extraction" }, "response": [] },
+        { "name": "Get Personnel by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel/1" }, "response": [] },
+        {
+          "name": "Create Personnel",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/personnel",
+            "body": { "mode": "raw", "raw": "{\\n  \"firstName\": \"Ali\",\\n  \"lastName\": \"Ben\",\\n  \"email\": \"ali.ben@test.com\",\\n  \"phone\": \"+213555123456\",\\n  \"position\": \"Ouvrier\",\\n  \"role\": \"ouvrier\",\\n  \"department\": \"Extraction\",\\n  \"siteId\": 1,\\n  \"teamId\": 1,\\n  \"hireDate\": \"2022-06-15\",\\n  \"salary\": 45000.00,\\n  \"status\": \"active\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Personnel",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/personnel/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"firstName\": \"Ali\",\\n  \"lastName\": \"Ben Updated\",\\n  \"email\": \"ali.ben@test.com\",\\n  \"phone\": \"+213555123456\",\\n  \"position\": \"Ouvrier\",\\n  \"role\": \"ouvrier\",\\n  \"department\": \"Extraction\",\\n  \"siteId\": 1,\\n  \"teamId\": 1,\\n  \"hireDate\": \"2022-06-15\",\\n  \"salary\": 48000.00,\\n  \"status\": \"active\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Personnel", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel/1" }, "response": [] }
+      ]
+    },
+    {
+      "name": "Personnel Schedule",
+      "item": [
+        { "name": "Get All Schedules", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel/schedule" }, "response": [] },
+        { "name": "Get Schedule by Personnel", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel/schedule?personnelId=1" }, "response": [] },
+        { "name": "Get Schedule by Personnel & Week", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel/schedule?personnelId=1&weekStart=2024-06-01" }, "response": [] },
+        {
+          "name": "Create Schedule",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/personnel/schedule",
+            "body": { "mode": "raw", "raw": "{\\n  \"personnelId\": 1,\\n  \"weekStart\": \"2024-06-01T00:00:00\",\\n  \"monday\": \"matin\",\\n  \"tuesday\": \"soir\",\\n  \"wednesday\": \"matin\",\\n  \"thursday\": \"nuit\",\\n  \"friday\": \"repos\",\\n  \"saturday\": \"repos\",\\n  \"sunday\": \"repos\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Schedule",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/personnel/schedule/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"personnelId\": 1,\\n  \"weekStart\": \"2024-06-01T00:00:00\",\\n  \"monday\": \"soir\",\\n  \"tuesday\": \"soir\",\\n  \"wednesday\": \"soir\",\\n  \"thursday\": \"nuit\",\\n  \"friday\": \"repos\",\\n  \"saturday\": \"repos\",\\n  \"sunday\": \"repos\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Schedule", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/personnel/schedule/1" }, "response": [] }
+      ]
+    },
+    {
+      "name": "Teams",
+      "item": [
+        { "name": "Get All Teams", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/teams" }, "response": [] },
+        { "name": "Get Team by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/teams/1" }, "response": [] },
+        {
+          "name": "Create Team",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/teams",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Equipe Alpha\",\\n  \"code\": \"EA01\",\\n  \"siteId\": 1,\\n  \"department\": \"Extraction\",\\n  \"shiftId\": 1,\\n  \"chefId\": 1,\\n  \"adjointId\": 2,\\n  \"status\": \"active\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Team",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/teams/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Equipe Alpha Updated\",\\n  \"code\": \"EA01\",\\n  \"siteId\": 1,\\n  \"department\": \"Extraction\",\\n  \"shiftId\": 1,\\n  \"chefId\": 1,\\n  \"adjointId\": 2,\\n  \"status\": \"active\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Team", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/teams/1" }, "response": [] },
+        {
+          "name": "Assign Member",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/teams/1/members/3?role=ouvrier"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Member",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/teams/1/members/3"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Shifts",
+      "item": [
+        { "name": "Get All Shifts", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/shifts" }, "response": [] },
+        { "name": "Get Shift by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/shifts/1" }, "response": [] },
+        {
+          "name": "Create Shift",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/shifts",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Matin\",\\n  \"startTime\": \"06:00\",\\n  \"endTime\": \"14:00\",\\n  \"workers\": 12,\\n  \"status\": \"active\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Shift",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/shifts/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"name\": \"Matin\",\\n  \"startTime\": \"06:00\",\\n  \"endTime\": \"14:00\",\\n  \"workers\": 15,\\n  \"status\": \"active\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Shift", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/shifts/1" }, "response": [] }
+      ]
+    },
+    {
+      "name": "Production",
+      "item": [
+        { "name": "Get All Production", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/production" }, "response": [] },
+        { "name": "Get Production by Site", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/production?siteId=1" }, "response": [] },
+        { "name": "Get Production by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/production/1" }, "response": [] },
+        {
+          "name": "Create Production",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/production",
+            "body": { "mode": "raw", "raw": "{\\n  \"siteId\": 1,\\n  \"date\": \"2024-06-15T08:00:00\",\\n  \"target\": 5000,\\n  \"actual\": 4200,\\n  \"unit\": \"tonnes\",\\n  \"notes\": \"Production normale\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Production",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/production/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"siteId\": 1,\\n  \"date\": \"2024-06-15T08:00:00\",\\n  \"target\": 5000,\\n  \"actual\": 4500,\\n  \"unit\": \"tonnes\",\\n  \"notes\": \"Production mise a jour\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Production", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/production/1" }, "response": [] }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        { "name": "Get All Reports", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/reports" }, "response": [] },
+        { "name": "Get Reports by Site", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/reports?siteId=1" }, "response": [] },
+        { "name": "Get Reports by Type", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/reports?type=security" }, "response": [] },
+        { "name": "Get Report by ID", "request": { "method": "GET", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/reports/1" }, "response": [] },
+        {
+          "name": "Create Report",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/reports",
+            "body": { "mode": "raw", "raw": "{\\n  \"title\": \"Incident securite Zone B\",\\n  \"type\": \"security\",\\n  \"content\": \"Description de l'incident...\",\\n  \"siteId\": 1,\\n  \"authorId\": 1,\\n  \"date\": \"2024-06-15T10:30:00\",\\n  \"status\": \"open\"\\n}" }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Report",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/reports/1",
+            "body": { "mode": "raw", "raw": "{\\n  \"title\": \"Incident securite Zone B\",\\n  \"type\": \"security\",\\n  \"content\": \"Mise a jour de l'incident...\",\\n  \"siteId\": 1,\\n  \"authorId\": 1,\\n  \"date\": \"2024-06-15T10:30:00\",\\n  \"status\": \"investigating\"\\n}" }
+          },
+          "response": []
+        },
+        { "name": "Delete Report", "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }], "url": "{{baseUrl}}/reports/1" }, "response": [] }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api" },
+    { "key": "token", "value": "" }
+  ]
+}

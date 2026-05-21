@@ -1,0 +1,96 @@
+---
+- name: Déployer MinTrack avec user ansible
+  hosts: localhost
+  connection: local
+  become: yes
+  become_user: ansible
+  gather_facts: no
+  
+  vars:
+    project_dir: /home/ansible/mintrack
+    app_port: 3000
+    local_src: /home/kali/Téléchargements/MINI
+    
+  tasks:
+    - name: Vérifier user ansible
+      command: whoami
+      register: current_user
+      changed_when: false
+      
+    - name: Afficher user
+      debug:
+        msg: "Exécution en tant que: {{ current_user.stdout }}"
+
+    - name: Créer répertoire projet
+      file:
+        path: "{{ project_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Créer sous-répertoires
+      file:
+        path: "{{ project_dir }}/{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - postgres_data
+        - logs
+        - ssl
+
+    - name: Copier fichiers Docker
+      copy:
+        src: "{{ local_src }}/{{ item }}"
+        dest: "{{ project_dir }}/"
+        mode: '0644'
+      loop:
+        - Dockerfile
+        - docker-compose.yml
+        - init-db.sql
+        - nginx.conf
+
+    - name: Copier code source
+      synchronize:
+        src: "{{ local_src }}/"
+        dest: "{{ project_dir }}/src/"
+        rsync_opts:
+          - "--exclude=node_modules"
+          - "--exclude=.next"
+          - "--exclude=.git"
+          - "--exclude=ansible"
+
+    - name: Vérifier Docker permissions
+      command: docker ps
+      register: docker_check
+      changed_when: false
+
+    - name: Arrêter anciens conteneurs
+      command:
+        cmd: docker-compose down
+        chdir: "{{ project_dir }}"
+      ignore_errors: yes
+
+    - name: Construire et démarrer
+      command:
+        cmd: docker-compose up -d --build
+        chdir: "{{ project_dir }}"
+
+    - name: Attendre démarrage
+      wait_for:
+        port: "{{ app_port }}"
+        delay: 15
+        timeout: 120
+
+    - name: Statut conteneurs
+      command:
+        cmd: docker-compose ps
+        chdir: "{{ project_dir }}"
+      register: status
+      changed_when: false
+
+    - name: Afficher accès
+      debug:
+        msg:
+          - "✅ Déploiement OK!"
+          - "User: {{ current_user.stdout }}"
+          - "Local: http://localhost:{{ app_port }}"
+          - "Réseau: http://10.133.190.60:{{ app_port }}"
