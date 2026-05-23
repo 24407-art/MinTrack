@@ -1,0 +1,540 @@
+/* ============================================================
+   Dashboard — Design Institutionnel · MinTrack
+   Vert #006233  ·  Or #FFD700  ·  Rouge #CE1126
+   ============================================================ */
+
+$green:     #006233;
+$green-lit: #00a357;
+$gold:      #FFD700;
+$gold-dark: #9a7d00;
+$gold-text: #3d3200;
+$red:       #CE1126;
+$white:     #ffffff;
+$gray-50:   #f9fafb;
+$gray-100:  #f3f4f6;
+$gray-600:  #4b5563;
+
+/* ============================================================
+   LAYOUT GLOBAL
+   ============================================================ */
+.dashboard {
+  min-height: 100vh;
+  background: $gray-50;
+  padding: 2rem 1.5rem 1.5rem;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.dashboard-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $green;
+  margin: 0;
+
+  span { color: $gold; }
+}
+
+.date-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 98, 51, 0.05);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $green;
+  border: 1px solid rgba(0, 98, 51, 0.1);
+
+  svg { width: 16px; height: 16px; }
+}
+
+/* ============================================================
+   LOADING / ERROR
+   ============================================================ */
+.loading-state,
+.error-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem;
+  color: $gray-600;
+  font-size: 0.95rem;
+}
+
+.error-msg { color: $red; }
+
+.loading-spinner {
+  width: 24px; height: 24px;
+  border: 2px solid rgba(0, 98, 51, 0.1);
+  border-top-color: $green;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   TABS
+   ============================================================ */
+.tab-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: $gray-600;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+
+  i { font-size: 0.85rem; }
+
+  &:hover {
+    background: rgba(0, 98, 51, 0.05);
+    color: $green;
+  }
+
+  &.active {
+    background: $green;
+    color: $white;
+    box-shadow: 0 4px 12px rgba(0, 98, 51, 0.3);
+  }
+
+  &.gold {
+    background: $gold !important;
+    color: $gold-text !important;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4) !important;
+  }
+}
+
+/* ============================================================
+   TAB CONTENT
+   ============================================================ */
+.tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   KPI CARDS — Glassmorphism 3D
+   ============================================================ */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.kpi-card {
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  padding: 1.5rem;
+  perspective: 1200px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  /* Halo subtil de couleur */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--card-bg, transparent) 0%, transparent 70%);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &:hover {
+    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+  }
+}
+
+.kpi-inner {
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease;
+}
+
+.kpi-card:hover .kpi-inner {
+  transform: translateZ(20px);
+}
+
+.kpi-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  margin-bottom: 1rem;
+  transform: translateZ(0);
+  transition: transform 0.4s ease;
+
+  i { font-size: 1.1rem; }
+}
+
+.kpi-card:hover .kpi-icon {
+  transform: translateZ(50px);
+}
+
+.kpi-meta {
+  margin-bottom: 0.75rem;
+}
+
+.kpi-label {
+  display: block;
+  font-size: 0.8rem;
+  color: $gray-600;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.kpi-value {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--card-color, $green);
+  line-height: 1;
+  transform: translateZ(0);
+  transition: transform 0.4s ease;
+}
+
+.kpi-unit {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $gray-600;
+  margin-left: 0.25rem;
+}
+
+.kpi-card:hover .kpi-value {
+  transform: translateZ(40px);
+}
+
+.kpi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+
+  &.up {
+    background: rgba(0, 98, 51, 0.08);
+    color: $green;
+  }
+
+  &.down {
+    background: rgba(206, 17, 38, 0.08);
+    color: $red;
+  }
+}
+
+.kpi-bar {
+  height: 4px;
+  background: $gray-100;
+  border-radius: 2px;
+  overflow: hidden;
+
+  .kpi-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, $green, $green-lit);
+    transition: width 0.8s ease;
+  }
+}
+
+/* ============================================================
+   PANEL / SECTION
+   ============================================================ */
+.panel {
+  background: $white;
+  border: 1px solid $gray-100;
+  border-radius: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid $gray-100;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $green;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i { font-size: 0.9rem; }
+  }
+}
+
+.panel-badge {
+  padding: 0.25rem 0.75rem;
+  background: rgba(0, 98, 51, 0.05);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $green;
+
+  &.gold {
+    background: rgba(255, 215, 0, 0.1);
+    color: $gold-dark;
+  }
+}
+
+.panel-body {
+  padding: 1.5rem;
+}
+
+/* ============================================================
+   DATA TABLE
+   ============================================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead th {
+    text-align: left;
+    padding: 0.75rem 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $gray-600;
+    border-bottom: 1px solid $gray-100;
+  }
+
+  tbody tr {
+    transition: background 0.15s ease;
+
+    &:hover { background: rgba(0, 98, 51, 0.02); }
+
+    td {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.875rem;
+      color: #374151;
+      border-bottom: 1px solid $gray-100;
+    }
+  }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.active {
+    background: rgba(0, 98, 51, 0.1);
+    color: $green;
+  }
+
+  &.pending {
+    background: rgba(255, 215, 0, 0.12);
+    color: $gold-dark;
+  }
+
+  &.resolved, &.inactive, &.abrogated {
+    background: rgba(206, 17, 38, 0.1);
+    color: $red;
+  }
+}
+
+/* ============================================================
+   BAR CHART (Production)
+   ============================================================ */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  height: 200px;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid $gray-100;
+}
+
+.bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bar-track {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  background: rgba(0,0,0,0.02);
+  border-radius: 8px 8px 0 0;
+}
+
+.bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, $green, $green-lit);
+  border-radius: 8px 8px 0 0;
+  transition: height 0.6s ease;
+  min-height: 4px;
+}
+
+.bar-value {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: $green;
+}
+
+.bar-label {
+  font-size: 0.7rem;
+  color: $gray-600;
+  font-weight: 500;
+}
+
+/* ============================================================
+   CHARTS — SVG 3D
+   ============================================================ */
+.chart-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 320px;
+}
+
+.svg-chart {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+}
+
+/* Donut isométrique */
+.donut-iso {
+  .svg-chart { max-width: 500px; }
+}
+
+/* ============================================================
+   HORIZONTAL BARS — Effet Relief
+   ============================================================ */
+.hbar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.hbar-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 60px;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hbar-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $gray-600;
+}
+
+.hbar-track {
+  height: 16px;
+  background: $gray-100;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hbar-fill {
+  height: 100%;
+  border-radius: 8px;
+  position: relative;
+  border-bottom: 4px solid rgba(0,0,0,0.2);
+  transition: width 0.8s ease;
+
+  /* Lumière en haut */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35), transparent);
+    border-radius: 8px 8px 0 0;
+  }
+}
+
+.hbar-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $green;
+  text-align: right;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 767px) {
+  .dashboard { padding: 1.5rem 1rem; }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hbar-item {
+    grid-template-columns: 80px 1fr 50px;
+    gap: 0.5rem;
+  }
+
+  .bar-chart {
+    height: 160px;
+    gap: 0.4rem;
+  }
+}

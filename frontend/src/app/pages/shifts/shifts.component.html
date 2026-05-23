@@ -1,0 +1,136 @@
+<div class="shifts-page">
+
+  <div class="page-header">
+    <h1 class="page-title"><i class="fa-solid fa-clock"></i> Équipes (Shifts)</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Chargement des shifts...</span>
+  </div>
+  <div *ngIf="error" class="error-msg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && page">
+
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--card-color:#006233;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#006233,#00a357);">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Total shifts</span>
+            <span class="kpi-value">{{ stats.total }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#FFD700;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#FFD700,#9a7d00);">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Actifs</span>
+            <span class="kpi-value">{{ stats.active }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.active / stats.total) * 100" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#006233;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#006233,#00a357);">
+            <i class="fa-solid fa-users"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Total ouvriers</span>
+            <span class="kpi-value">{{ stats.totalWorkers }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#CE1126;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#CE1126,#e63946);">
+            <i class="fa-solid fa-user-group"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Moyenne/shift</span>
+            <span class="kpi-value">{{ stats.avgWorkers | number:'1.0-0' }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.avgWorkers / 20) * 100" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-list"></i> Liste des shifts</h3>
+        <div class="panel-actions">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" [(ngModel)]="searchText" placeholder="Rechercher..." />
+          </div>
+          <span class="panel-badge">{{ filteredShifts.length }} entrées</span>
+        </div>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Début</th>
+              <th>Fin</th>
+              <th>Ouvriers</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of filteredShifts">
+              <td class="shift-name">{{ s.name }}</td>
+              <td class="time-cell">{{ s.startTime }}</td>
+              <td class="time-cell">{{ s.endTime }}</td>
+              <td class="workers-cell">{{ s.workers }}</td>
+              <td><span class="status-badge" [class]="s.status">{{ s.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination-bar" *ngIf="page.totalPages > 1">
+      <div class="page-size">
+        <span>Afficher</span>
+        <select [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+          <option [ngValue]="100">100</option>
+        </select>
+        <span>par page</span>
+      </div>
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="loadPage(currentPage - 1)">
+        <i class="fa-solid fa-chevron-left"></i> Précédent
+      </button>
+      <div class="page-numbers">
+        <button
+          *ngFor="let p of [].constructor(page.totalPages); let i = index"
+          class="page-num"
+          [class.active]="i === currentPage"
+          (click)="loadPage(i)">
+          {{ i + 1 }}
+        </button>
+      </div>
+      <button class="page-btn" [disabled]="currentPage >= page.totalPages - 1" (click)="loadPage(currentPage + 1)">
+        Suivant <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+
+  </div>
+</div>

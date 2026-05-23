@@ -1,0 +1,170 @@
+<div class="form-page">
+  <div class="form-card">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="header-text">
+          <h1>{{ isEdit ? 'Modifier le Site' : 'Nouveau Site' }}</h1>
+          <p>{{ isEdit ? 'Mise à jour des informations du site minier' : 'Création d\'un nouveau site minier' }}</p>
+        </div>
+      </div>
+      <div class="header-badge" [class.edit]="isEdit">
+        <span class="badge-dot" *ngIf="!loading"></span>
+        <span class="badge-spinner" *ngIf="loading"></span>
+        {{ isEdit ? (loading ? 'Chargement...' : 'Édition') : 'Brouillon' }}
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert-error" *ngIf="error">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>{{ error }}</span>
+    </div>
+
+    <div class="alert-success" *ngIf="success">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span>{{ success }}</span>
+    </div>
+
+    <!-- Form (toujours visible) -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Section: Informations générales -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="section-bar"></div>
+          <span>Informations générales</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom du site <span class="required">*</span></label>
+            <input type="text" formControlName="name" placeholder="Ex: Site Nord Kpékpé"
+              [class.error]="f['name'].invalid && f['name'].touched">
+            <div class="field-error" *ngIf="f['name'].invalid && f['name'].touched">
+              <span *ngIf="f['name'].hasError('required')">Le nom est requis</span>
+              <span *ngIf="f['name'].hasError('minlength')">Minimum 3 caractères</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Code <span class="required">*</span></label>
+            <input type="text" formControlName="code" placeholder="Ex: SNK-001"
+              [class.error]="f['code'].invalid && f['code'].touched">
+            <div class="field-error" *ngIf="f['code'].invalid && f['code'].touched">
+              <span *ngIf="f['code'].hasError('required')">Le code est requis</span>
+              <span *ngIf="f['code'].hasError('minlength')">Minimum 2 caractères</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Minerais <span class="required">*</span></label>
+            <select formControlName="mineral" [class.error]="f['mineral'].invalid && f['mineral'].touched">
+              <option value="">Sélectionner un minerai</option>
+              <option *ngFor="let m of mineralOptions" [value]="m">{{ m }}</option>
+            </select>
+            <div class="field-error" *ngIf="f['mineral'].invalid && f['mineral'].touched">Le minerai est requis</div>
+          </div>
+
+          <div class="form-group">
+            <label>Région <span class="required">*</span></label>
+            <select formControlName="region" [class.error]="f['region'].invalid && f['region'].touched">
+              <option value="">Sélectionner une région</option>
+              <option *ngFor="let r of regionOptions" [value]="r">{{ r }}</option>
+            </select>
+            <div class="field-error" *ngIf="f['region'].invalid && f['region'].touched">La région est requise</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Coordonnées GPS</label>
+            <input type="text" formControlName="coordinates" placeholder="Ex: 9.3077, 1.4067">
+          </div>
+
+          <div class="form-group">
+            <label>Date d'ouverture</label>
+            <input type="date" formControlName="startDate">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Caractéristiques -->
+      <div class="form-section">
+        <div class="section-title">
+          <div class="section-bar"></div>
+          <span>Caractéristiques opérationnelles</span>
+        </div>
+
+        <div class="form-row four-col">
+          <div class="form-group">
+            <label>Capacité (tonnes/jour) <span class="required">*</span></label>
+            <input type="number" formControlName="capacity" placeholder="0"
+              [class.error]="f['capacity'].invalid && f['capacity'].touched">
+            <div class="field-error" *ngIf="f['capacity'].invalid && f['capacity'].touched">Doit être >= 0</div>
+          </div>
+
+          <div class="form-group">
+            <label>Production actuelle <span class="required">*</span></label>
+            <input type="number" formControlName="currentProduction" placeholder="0"
+              [class.error]="f['currentProduction'].invalid && f['currentProduction'].touched"
+              [class.warning]="f['currentProduction'].value > f['capacity'].value">
+            <div class="field-error" *ngIf="f['currentProduction'].invalid && f['currentProduction'].touched">Doit être >= 0</div>
+            <div class="field-warning" *ngIf="f['currentProduction'].value > f['capacity'].value && f['capacity'].value > 0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Production supérieure à la capacité
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Ouvriers <span class="required">*</span></label>
+            <input type="number" formControlName="workers" placeholder="0"
+              [class.error]="f['workers'].invalid && f['workers'].touched">
+            <div class="field-error" *ngIf="f['workers'].invalid && f['workers'].touched">Doit être >= 0</div>
+          </div>
+
+          <div class="form-group">
+            <label>Équipements <span class="required">*</span></label>
+            <input type="number" formControlName="equipmentCount" placeholder="0"
+              [class.error]="f['equipmentCount'].invalid && f['equipmentCount'].touched">
+            <div class="field-error" *ngIf="f['equipmentCount'].invalid && f['equipmentCount'].touched">Doit être >= 0</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Superficie (ha)</label>
+            <input type="text" formControlName="area" placeholder="Ex: 250">
+          </div>
+
+          <div class="form-group">
+            <label>Statut <span class="required">*</span></label>
+            <div class="status-options">
+              <label class="status-option" *ngFor="let s of statusOptions" [class.active]="f['status'].value === s.value">
+                <input type="radio" formControlName="status" [value]="s.value">
+                <span class="status-dot" [class]="s.value"></span>
+                <span>{{ s.label }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancel()" [disabled]="saving">
+          Annuler
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="saving">
+          <span *ngIf="!saving">{{ isEdit ? 'Enregistrer les modifications' : 'Créer le site' }}</span>
+          <span *ngIf="saving" class="btn-spinner"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

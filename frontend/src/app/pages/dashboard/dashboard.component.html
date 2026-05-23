@@ -1,0 +1,371 @@
+<div class="dashboard">
+
+  <!-- En-tête -->
+  <div class="dashboard-header">
+    <h1 class="dashboard-title">Tableau de <span>bord</span></h1>
+    <div class="date-pill">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+      <span>{{ today | date:'EEEE d MMMM yyyy' }}</span>
+    </div>
+  </div>
+
+  <!-- Chargement / Erreur -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Chargement des données...</span>
+  </div>
+  <div *ngIf="error" class="error-msg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    {{ error }}
+  </div>
+
+  <!-- Onglets -->
+  <nav class="tab-bar" *ngIf="!loading && !error">
+    <button
+      *ngFor="let tab of tabs"
+      class="tab-btn"
+      [class.active]="activeTab === tab.key"
+      [class.gold]="tab.key === 'charts' && activeTab === 'charts'"
+      (click)="setTab(tab.key)">
+      <i class="fa-solid {{ tab.icon }}"></i>
+      <span>{{ tab.label }}</span>
+    </button>
+  </nav>
+
+  <!-- ============================================
+       ONGLET : VUE D'ENSEMBLE
+       ============================================ -->
+  <div *ngIf="activeTab === 'overview' && data" class="tab-content">
+
+    <!-- Cartes KPI 3D -->
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--card-color:#006233; --card-bg:rgba(0,98,51,0.06);">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#006233,#00a357);">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Production journalière</span>
+            <span class="kpi-value">{{ data.stats.production.daily }}</span>
+            <span class="kpi-unit">tonnes</span>
+          </div>
+          <div class="kpi-badge" [class.up]="data.stats.production.change >= 0" [class.down]="data.stats.production.change < 0">
+            <i class="fa-solid" [class.fa-arrow-trend-up]="data.stats.production.change >= 0" [class.fa-arrow-trend-down]="data.stats.production.change < 0"></i>
+            {{ data.stats.production.change | number:'1.1-1' }}%
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(data.stats.production.daily / 1500) * 100"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#FFD700; --card-bg:rgba(255,215,0,0.08);">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#FFD700,#9a7d00);">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Équipements actifs</span>
+            <span class="kpi-value">{{ data.stats.equipment.active }}</span>
+            <span class="kpi-unit">/ {{ data.stats.equipment.total }}</span>
+          </div>
+          <div class="kpi-badge" [class.up]="data.stats.equipment.change >= 0" [class.down]="data.stats.equipment.change < 0">
+            <i class="fa-solid" [class.fa-arrow-trend-up]="data.stats.equipment.change >= 0" [class.fa-arrow-trend-down]="data.stats.equipment.change < 0"></i>
+            {{ data.stats.equipment.change | number:'1.1-1' }}%
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(data.stats.equipment.active / data.stats.equipment.total) * 100" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#006233; --card-bg:rgba(0,98,51,0.06);">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#006233,#00a357);">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Personnel actif</span>
+            <span class="kpi-value">{{ data.stats.personnel.total }}</span>
+            <span class="kpi-unit">ouvriers</span>
+          </div>
+          <div class="kpi-badge" [class.up]="data.stats.personnel.change >= 0" [class.down]="data.stats.personnel.change < 0">
+            <i class="fa-solid" [class.fa-arrow-trend-up]="data.stats.personnel.change >= 0" [class.fa-arrow-trend-down]="data.stats.personnel.change < 0"></i>
+            {{ data.stats.personnel.change | number:'1.1-1' }}%
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(data.stats.personnel.total / 500) * 100"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#CE1126; --card-bg:rgba(206,17,38,0.06);">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#CE1126,#e63946);">
+            <i class="fa-solid fa-ban"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Incidents ouverts</span>
+            <span class="kpi-value">{{ data.stats.incidents.open }}</span>
+            <span class="kpi-unit">cas</span>
+          </div>
+          <div class="kpi-badge" [class.up]="data.stats.incidents.change < 0" [class.down]="data.stats.incidents.change >= 0">
+            <i class="fa-solid" [class.fa-arrow-trend-up]="data.stats.incidents.change < 0" [class.fa-arrow-trend-down]="data.stats.incidents.change >= 0"></i>
+            {{ data.stats.incidents.change | number:'1.1-1' }}%
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(data.stats.incidents.open / 20) * 100" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tableau Incidents récents -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Incidents récents</h3>
+        <span class="panel-badge">{{ data.recentIncidents.length }} entrées</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Statut</th>
+              <th>Site</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inc of data.recentIncidents">
+              <td>{{ inc.title }}</td>
+              <td><span class="status-badge" [class]="inc.status">{{ inc.status }}</span></td>
+              <td>{{ inc.siteName || '—' }}</td>
+              <td>{{ inc.date | date:'dd/MM HH:mm' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       ONGLET : PRODUCTION
+       ============================================ -->
+  <div *ngIf="activeTab === 'production' && data" class="tab-content">
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-file-lines"></i> Production — 7 derniers jours</h3>
+        <span class="panel-badge gold">Tonnes</span>
+      </div>
+      <div class="panel-body">
+        <div class="bar-chart">
+          <div *ngFor="let entry of data.productionChart" class="bar-item">
+            <div class="bar-track">
+              <div class="bar-fill" [style.height.%]="(entry.tonnes / (maxTonnes() || 1)) * 100"></div>
+            </div>
+            <span class="bar-value">{{ entry.tonnes }}</span>
+            <span class="bar-label">{{ entry.date }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       ONGLET : ÉQUIPEMENTS
+       ============================================ -->
+  <div *ngIf="activeTab === 'equipment' && data" class="tab-content">
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-cube"></i> Statut des équipements</h3>
+        <span class="panel-badge">{{ data.equipmentStatus.length }} unités</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Modèle</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let eq of data.equipmentStatus">
+              <td>{{ eq.name }}</td>
+              <td>{{ eq.type }}</td>
+              <td>{{ eq.model }}</td>
+              <td><span class="status-badge" [class]="eq.status">{{ eq.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       ONGLET : PERSONNEL
+       ============================================ -->
+  <div *ngIf="activeTab === 'personnel' && data" class="tab-content">
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Équipes (Shifts)</h3>
+        <span class="panel-badge">{{ data.shifts.length }} shifts</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Horaire</th>
+              <th>Ouvriers</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of data.shifts">
+              <td>{{ s.name }}</td>
+              <td>{{ s.time }}</td>
+              <td>{{ s.workers }}</td>
+              <td><span class="status-badge" [class]="s.status">{{ s.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       ONGLET : GRAPHIQUES (SVG natif)
+       ============================================ -->
+  <div *ngIf="activeTab === 'charts'" class="tab-content">
+
+    <!-- Cylindres 3D SVG -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-chart-pie"></i> Totaux — Cylindres 3D</h3>
+      </div>
+      <div class="panel-body chart-body">
+        <svg viewBox="0 0 600 300" class="svg-chart">
+          <defs>
+            <!-- Cylindre Vert -->
+            <linearGradient id="cylGreen" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#004d29"/><stop offset="30%" stop-color="#006233"/><stop offset="60%" stop-color="#008f4c"/><stop offset="100%" stop-color="#004d29"/>
+            </linearGradient>
+            <linearGradient id="cylGreenTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00a357"/><stop offset="100%" stop-color="#006233"/>
+            </linearGradient>
+            <!-- Cylindre Or -->
+            <linearGradient id="cylGold" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#b8a030"/><stop offset="30%" stop-color="#FFD700"/><stop offset="60%" stop-color="#ffe44d"/><stop offset="100%" stop-color="#b8a030"/>
+            </linearGradient>
+            <linearGradient id="cylGoldTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffe44d"/><stop offset="100%" stop-color="#FFD700"/>
+            </linearGradient>
+            <!-- Cylindre Rouge -->
+            <linearGradient id="cylRed" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#a30f1f"/><stop offset="30%" stop-color="#CE1126"/><stop offset="60%" stop-color="#e63946"/><stop offset="100%" stop-color="#a30f1f"/>
+            </linearGradient>
+            <linearGradient id="cylRedTop" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#e63946"/><stop offset="100%" stop-color="#CE1126"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Ombre cylindre 1 -->
+          <ellipse cx="120" cy="265" rx="50" ry="12" fill="rgba(0,0,0,0.15)"/>
+          <!-- Corps cylindre 1 (vert) -->
+          <path d="M70,80 A50,15 0 0,0 170,80 L170,250 A50,15 0 0,1 70,250 Z" fill="url(#cylGreen)"/>
+          <!-- Dessus cylindre 1 -->
+          <ellipse cx="120" cy="80" rx="50" ry="15" fill="url(#cylGreenTop)"/>
+          <!-- Valeur -->
+          <text x="120" y="60" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold">1 247</text>
+          <text x="120" y="290" text-anchor="middle" fill="#006233" font-size="12" font-weight="600">Total</text>
+
+          <!-- Ombre cylindre 2 -->
+          <ellipse cx="300" cy="265" rx="50" ry="12" fill="rgba(0,0,0,0.15)"/>
+          <!-- Corps cylindre 2 (or) -->
+          <path d="M250,110 A50,15 0 0,0 350,110 L350,250 A50,15 0 0,1 250,250 Z" fill="url(#cylGold)"/>
+          <!-- Dessus cylindre 2 -->
+          <ellipse cx="300" cy="110" rx="50" ry="15" fill="url(#cylGoldTop)"/>
+          <text x="300" y="90" text-anchor="middle" fill="#3d3200" font-size="18" font-weight="bold">892</text>
+          <text x="300" y="290" text-anchor="middle" fill="#9a7d00" font-size="12" font-weight="600">Actifs</text>
+
+          <!-- Ombre cylindre 3 -->
+          <ellipse cx="480" cy="265" rx="50" ry="12" fill="rgba(0,0,0,0.15)"/>
+          <!-- Corps cylindre 3 (rouge) -->
+          <path d="M430,170 A50,15 0 0,0 530,170 L530,250 A50,15 0 0,1 430,250 Z" fill="url(#cylRed)"/>
+          <!-- Dessus cylindre 3 -->
+          <ellipse cx="480" cy="170" rx="50" ry="15" fill="url(#cylRedTop)"/>
+          <text x="480" y="150" text-anchor="middle" fill="#fff" font-size="18" font-weight="bold">355</text>
+          <text x="480" y="290" text-anchor="middle" fill="#CE1126" font-size="12" font-weight="600">Inactifs</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Donut isométrique SVG (Pièce empilée) -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-chart-pie"></i> Répartition — Donut Isométrique</h3>
+      </div>
+      <div class="panel-body chart-body donut-iso">
+        <svg viewBox="0 0 400 300" class="svg-chart">
+          <defs>
+            <!-- 16 calques pour l'épaisseur -->
+            <g id="donutSlice">
+              <path d="M200,150 L200,80 A70,70 0 0,1 270,150 Z" fill="#006233"/>
+              <path d="M200,150 L270,150 A70,70 0 0,1 200,220 Z" fill="#FFD700"/>
+              <path d="M200,150 L200,220 A70,70 0 0,1 130,150 Z" fill="#CE1126"/>
+            </g>
+            <filter id="shadow">
+              <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="rgba(0,0,0,0.2)"/>
+            </filter>
+          </defs>
+          <!-- Empilement 3D de 16 calques -->
+          <g *ngFor="let z of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]" [attr.transform]="'translate(0,' + z + ')'">
+            <ellipse cx="200" cy="155" rx="90" ry="50" fill="none" stroke="rgba(0,0,0,0.03)" stroke-width="1"/>
+          </g>
+          <!-- Dessus -->
+          <g transform="translate(0,0)">
+            <ellipse cx="200" cy="130" rx="90" ry="50" fill="#00a357" opacity="0.9"/>
+            <ellipse cx="200" cy="130" rx="50" ry="28" fill="#f8fafc"/>
+            <!-- Texte -->
+            <text x="200" y="125" text-anchor="middle" fill="#006233" font-size="14" font-weight="bold">71.5%</text>
+            <text x="200" y="142" text-anchor="middle" fill="#64748b" font-size="10">Actifs</text>
+          </g>
+          <!-- Légende -->
+          <g transform="translate(40, 240)">
+            <rect x="0" y="0" width="12" height="12" rx="3" fill="#006233"/><text x="20" y="10" fill="#334155" font-size="11" font-weight="600">Total 1 247</text>
+            <rect x="120" y="0" width="12" height="12" rx="3" fill="#FFD700"/><text x="140" y="10" fill="#334155" font-size="11" font-weight="600">Actifs 892</text>
+            <rect x="230" y="0" width="12" height="12" rx="3" fill="#CE1126"/><text x="250" y="10" fill="#334155" font-size="11" font-weight="600">Inactifs 355</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Barres horizontales Relief -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-chart-bar"></i> Barres horizontales — Effet Relief</h3>
+      </div>
+      <div class="panel-body chart-body">
+        <div class="hbar-list">
+          <div class="hbar-item">
+            <span class="hbar-label">Production</span>
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:78%; background:linear-gradient(90deg,#006233,#00a357);"></div>
+            </div>
+            <span class="hbar-value">1 247</span>
+          </div>
+          <div class="hbar-item">
+            <span class="hbar-label">Actifs</span>
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:56%; background:linear-gradient(90deg,#FFD700,#9a7d00);"></div>
+            </div>
+            <span class="hbar-value">892</span>
+          </div>
+          <div class="hbar-item">
+            <span class="hbar-label">Inactifs</span>
+            <div class="hbar-track">
+              <div class="hbar-fill" style="width:22%; background:linear-gradient(90deg,#CE1126,#e63946);"></div>
+            </div>
+            <span class="hbar-value">355</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

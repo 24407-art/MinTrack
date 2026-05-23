@@ -1,0 +1,136 @@
+<div class="reports-page">
+
+  <div class="page-header">
+    <h1 class="page-title"><i class="fa-solid fa-chart-pie"></i> Rapports</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <span>Chargement des rapports...</span>
+  </div>
+  <div *ngIf="error" class="error-msg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && page">
+
+    <div class="kpi-grid">
+      <div class="kpi-card" style="--card-color:#006233;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#006233,#00a357);">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Total rapports</span>
+            <span class="kpi-value">{{ stats.total }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#FFD700;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#FFD700,#9a7d00);">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Complétés</span>
+            <span class="kpi-value">{{ stats.completed }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.completed / stats.total) * 100" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#CE1126;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#CE1126,#e63946);">
+            <i class="fa-solid fa-clock"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">En attente</span>
+            <span class="kpi-value">{{ stats.pending }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.pending / stats.total) * 100" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div></div>
+        </div>
+      </div>
+
+      <div class="kpi-card" style="--card-color:#006233;">
+        <div class="kpi-inner">
+          <div class="kpi-icon" style="background:linear-gradient(135deg,#006233,#00a357);">
+            <i class="fa-solid fa-tags"></i>
+          </div>
+          <div class="kpi-meta">
+            <span class="kpi-label">Types</span>
+            <span class="kpi-value">{{ stats.types }}</span>
+          </div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.types / 5) * 100"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3><i class="fa-solid fa-list"></i> Liste des rapports</h3>
+        <div class="panel-actions">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" [(ngModel)]="searchText" placeholder="Rechercher..." />
+          </div>
+          <span class="panel-badge">{{ filteredReports.length }} entrées</span>
+        </div>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Titre</th>
+              <th>Type</th>
+              <th>Site</th>
+              <th>Statut</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of filteredReports">
+              <td class="report-title">{{ r.title }}</td>
+              <td><span class="type-badge">{{ r.type }}</span></td>
+              <td><span class="site-badge">{{ r.siteId || '—' }}</span></td>
+              <td><span class="status-badge" [class]="r.status">{{ r.status }}</span></td>
+              <td>{{ r.date | date:'dd/MM/yy HH:mm' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pagination-bar" *ngIf="page.totalPages > 1">
+      <div class="page-size">
+        <span>Afficher</span>
+        <select [(ngModel)]="pageSize" (change)="changePageSize(pageSize)">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+          <option [ngValue]="100">100</option>
+        </select>
+        <span>par page</span>
+      </div>
+      <button class="page-btn" [disabled]="currentPage === 0" (click)="loadPage(currentPage - 1)">
+        <i class="fa-solid fa-chevron-left"></i> Précédent
+      </button>
+      <div class="page-numbers">
+        <button
+          *ngFor="let p of [].constructor(page.totalPages); let i = index"
+          class="page-num"
+          [class.active]="i === currentPage"
+          (click)="loadPage(i)">
+          {{ i + 1 }}
+        </button>
+      </div>
+      <button class="page-btn" [disabled]="currentPage >= page.totalPages - 1" (click)="loadPage(currentPage + 1)">
+        Suivant <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+
+  </div>
+</div>

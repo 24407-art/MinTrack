@@ -1,0 +1,81 @@
+<div class="login-page">
+  <!-- Bouton Langue -->
+  <button class="lang-btn" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+    FR
+  </button>
+
+  <!-- Carte de connexion -->
+  <div class="login-card">
+    <!-- Logo flottant -->
+    <div class="logo-float">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M6.36 18.4 4 22"/><path d="m19.64 18.4 2.36 3.6"/><path d="M12 2v8"/><path d="m5 10 7-7 7 7"/><circle cx="12" cy="15" r="2"/><path d="M4 22h-2v-5.5a.5.5 0 0 1 .5-.5.5.5 0 0 0 .5-.5 2 2 0 0 1 2-2"/><path d="M22 22h-2v-5.5a.5.5 0 0 0-.5-.5.5.5 0 0 1-.5-.5 2 2 0 0 0-2-2"/></svg>
+    </div>
+
+    <div class="brand">
+      <h1>MinTrack</h1>
+      <p class="subtitle">Plateforme de Gestion des Mines</p>
+    </div>
+
+    <form (ngSubmit)="login()">
+      <!-- Nom d'utilisateur -->
+      <div class="form-group">
+        <label for="username">Nom d'utilisateur</label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <input
+            id="username"
+            type="text"
+            [(ngModel)]="username"
+            name="username"
+            placeholder="admin, chef ou ouvrier"
+            autocomplete="username"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="input-wrapper">
+          <span class="input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input
+            id="password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Erreur -->
+      <div *ngIf="error" class="error-msg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+        {{ error }}
+      </div>
+
+      <!-- Bouton connexion -->
+      <button type="submit" class="btn-login" [disabled]="loading">
+        <span *ngIf="!loading" class="btn-text">
+          Se connecter
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </span>
+        <span *ngIf="loading" class="btn-spinner"></span>
+      </button>
+    </form>
+
+    <div class="hint">
+      <small>
+        <strong>Comptes de test :</strong> admin / chef / ouvrier — password123
+      </small>
+    </div>
+  </div>
+</div>
