@@ -15,8 +15,14 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Integer siteId;
+
+    @Column(nullable = true)
+    private Integer entityId;
+
+    @Column(nullable = true)
+    private String entityType;
 
     @Column(nullable = false)
     private String action;

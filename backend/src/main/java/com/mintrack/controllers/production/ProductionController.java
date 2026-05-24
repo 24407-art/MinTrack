@@ -1,7 +1,9 @@
 package com.mintrack.controllers.production;
 
 import com.mintrack.dto.common.PageResponseDto;
+import com.mintrack.entities.audit.AuditLog;
 import com.mintrack.entities.production.Production;
+import com.mintrack.service.audit.AuditLogService;
 import com.mintrack.service.production.ProductionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,11 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/production")
 @RequiredArgsConstructor
 public class ProductionController {
     private final ProductionService productionService;
+    private final AuditLogService auditLogService;
 
     @GetMapping
     public PageResponseDto<Production> getAll(
@@ -52,13 +57,17 @@ public class ProductionController {
 
     @PostMapping
     public ResponseEntity<Production> create(@RequestBody Production production) {
-        return ResponseEntity.status(201).body(productionService.save(production));
+        Production saved = productionService.save(production);
+        auditLogService.logEntity(saved.getId(), "production", "CREATE", "unit", null, saved.getUnit(), "system");
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Production> update(@PathVariable Integer id, @RequestBody Production production) {
         try {
-            return ResponseEntity.ok(productionService.update(id, production));
+            Production updated = productionService.update(id, production);
+            auditLogService.logEntity(id, "production", "UPDATE", "unit", null, updated.getUnit(), "system");
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +75,13 @@ public class ProductionController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        auditLogService.logEntity(id, "production", "DELETE", "mineral", "supprimé", null, "system");
         productionService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<AuditLog>> getHistory(@PathVariable Integer id) {
+        return ResponseEntity.ok(auditLogService.findByEntity(id, "production"));
     }
 }

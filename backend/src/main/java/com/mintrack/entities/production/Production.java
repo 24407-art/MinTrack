@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +24,7 @@ public class Production {
     private Integer siteId;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     private Integer target;
     private Integer actual;

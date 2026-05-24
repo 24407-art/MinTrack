@@ -1,11 +1,5 @@
 package com.mintrack.controllers.dashboard;
 
-import com.mintrack.entities.equipment.Equipment;
-import com.mintrack.entities.personnel.Personnel;
-import com.mintrack.entities.personnel.Shift;
-import com.mintrack.entities.production.Production;
-import com.mintrack.entities.report.Report;
-import com.mintrack.entities.site.Site;
 import com.mintrack.service.equipment.EquipmentService;
 import com.mintrack.service.personnel.PersonnelService;
 import com.mintrack.service.personnel.ShiftService;

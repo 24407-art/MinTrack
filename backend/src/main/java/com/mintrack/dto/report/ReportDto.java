@@ -2,7 +2,7 @@ package com.mintrack.dto.report;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class ReportDto {
@@ -12,6 +12,6 @@ public class ReportDto {
     private String content;
     private Integer siteId;
     private Integer authorId;
-    private LocalDateTime date;
+    private LocalDate date;
     private String status;
 }

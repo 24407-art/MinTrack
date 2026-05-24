@@ -3,6 +3,16 @@
   <!-- En-tête -->
   <div class="page-header">
     <h1 class="page-title"><i class="fa-solid fa-graduation-cap"></i> Personnel</h1>
+    <div class="header-actions">
+      <button class="btn-add" (click)="openAdd()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Ajouter
+      </button>
+    </div>
   </div>
 
   <!-- Chargement / Erreur -->
@@ -11,7 +21,12 @@
     <span>Chargement du personnel...</span>
   </div>
   <div *ngIf="error" class="error-msg">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" x2="12" y1="8" y2="12" />
+      <line x1="12" x2="12.01" y1="16" y2="16" />
+    </svg>
     {{ error }}
   </div>
 
@@ -28,7 +43,9 @@
             <span class="kpi-label">Total employés</span>
             <span class="kpi-value">{{ stats.total }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" style="width:100%"></div>
+          </div>
         </div>
       </div>
 
@@ -41,7 +58,10 @@
             <span class="kpi-label">Actifs</span>
             <span class="kpi-value">{{ stats.active }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.active / stats.total) * 100" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="(stats.active / stats.total) * 100"
+              style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div>
+          </div>
         </div>
       </div>
 
@@ -54,7 +74,9 @@
             <span class="kpi-label">Départements</span>
             <span class="kpi-value">{{ stats.departments }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.departments / 10) * 100"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="(stats.departments / 10) * 100"></div>
+          </div>
         </div>
       </div>
 
@@ -68,7 +90,9 @@
             <span class="kpi-value">{{ stats.avgSalary | number:'1.0-0' }}</span>
             <span class="kpi-unit">MRU</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -79,7 +103,11 @@
         <h3><i class="fa-solid fa-list"></i> Liste du personnel</h3>
         <div class="panel-actions">
           <div class="search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
             <input type="text" [(ngModel)]="searchText" placeholder="Rechercher..." />
           </div>
           <span class="panel-badge">{{ filteredPersonnel.length }} entrées</span>
@@ -96,6 +124,7 @@
               <th>Département</th>
               <th>Rôle</th>
               <th>Statut</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -107,6 +136,20 @@
               <td><span class="dept-badge">{{ p.department }}</span></td>
               <td>{{ p.role }}</td>
               <td><span class="status-badge" [class]="p.status">{{ p.status }}</span></td>
+              <td class="actions-cell">
+                <button class="action-btn action-history" (click)="viewHistory(p)" title="Historique">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </button>
+                <button class="action-btn action-view" (click)="viewItem(p)" title="Visualiser">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="action-btn action-edit" (click)="editItem(p)" title="Modifier">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="action-btn action-delete" (click)="confirmDelete(p)" title="Supprimer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -129,11 +172,8 @@
         <i class="fa-solid fa-chevron-left"></i> Précédent
       </button>
       <div class="page-numbers">
-        <button
-          *ngFor="let p of [].constructor(page.totalPages); let i = index"
-          class="page-num"
-          [class.active]="i === currentPage"
-          (click)="loadPage(i)">
+        <button *ngFor="let p of [].constructor(page.totalPages); let i = index" class="page-num"
+          [class.active]="i === currentPage" (click)="loadPage(i)">
           {{ i + 1 }}
         </button>
       </div>
@@ -143,4 +183,143 @@
     </div>
 
   </div>
+
+  <!-- Add Modal -->
+  <div class="modal-overlay" *ngIf="showAddModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="17" y1="11" x2="23" y2="11" />
+          </svg>
+          Ajouter un Employé
+        </h3>
+        <button class="modal-close" (click)="closeAdd()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveNew()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nom</label>
+              <input type="text" [(ngModel)]="newItem.lastName" name="lastName" required>
+            </div>
+            <div class="form-group">
+              <label>Prénom</label>
+              <input type="text" [(ngModel)]="newItem.firstName" name="firstName" required>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="newItem.email" name="email" required>
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="tel" [(ngModel)]="newItem.phone" name="phone">
+            </div>
+            <div class="form-group full-width">
+              <label>Poste</label>
+              <input type="text" [(ngModel)]="newItem.position" name="position" required>
+            </div>
+            <div class="form-group">
+              <label>Département</label>
+              <select [(ngModel)]="newItem.department" name="department" required>
+                <option value="Extraction">Extraction</option>
+                <option value="Logistique">Logistique</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Sécurité">Sécurité</option>
+                <option value="Administration">Administration</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Rôle</label>
+              <select [(ngModel)]="newItem.role" name="role">
+                <option value="ouvrier">Ouvrier</option>
+                <option value="technicien">Technicien</option>
+                <option value="ingenieur">Ingénieur</option>
+                <option value="superviseur">Superviseur</option>
+                <option value="directeur">Directeur</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Date d'embauche</label>
+              <input type="date" [(ngModel)]="newItem.hireDate" name="hireDate" required>
+            </div>
+            <div class="form-group">
+              <label>Salaire (MRU)</label>
+              <input type="number" [(ngModel)]="newItem.salary" name="salary" required>
+            </div>
+            <div class="form-group">
+              <label>Statut</label>
+              <select [(ngModel)]="newItem.status" name="status">
+                <option value="ACTIVE">Actif</option>
+                <option value="INACTIVE">Inactif</option>
+                <option value="ON_LEAVE">En congé</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeAdd()">Annuler</button>
+            <button type="submit" class="btn-save" [disabled]="saving">
+              <span *ngIf="saving" class="spinner-small"></span>
+              {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Visualiser -->
+  <div class="modal-overlay" *ngIf="viewingItem && !showHistory" (click)="closeView()">
+    <div class="modal-card modal-view" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> 
+          {{ viewingItem.firstName }} {{ viewingItem.lastName }}
+        </h3>
+        <button class="modal-close" (click)="closeView()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid">
+          <div class="detail-item"><span class="detail-label">Email</span><span class="detail-value">{{ viewingItem.email }}</span></div>
+          <div class="detail-item"><span class="detail-label">Téléphone</span><span class="detail-value">{{ viewingItem.phone || '—' }}</span></div>
+          <div class="detail-item"><span class="detail-label">Poste</span><span class="detail-value">{{ viewingItem.position }}</span></div>
+          <div class="detail-item"><span class="detail-label">Département</span><span class="detail-value">{{ viewingItem.department }}</span></div>
+          <div class="detail-item"><span class="detail-label">Rôle</span><span class="detail-value">{{ viewingItem.role }}</span></div>
+          <div class="detail-item"><span class="detail-label">Statut</span><span class="detail-value"><span class="status-badge" [class]="viewingItem.status">{{ viewingItem.status }}</span></span></div>
+          <div class="detail-item"><span class="detail-label">Salaire</span><span class="detail-value">{{ viewingItem.salary | number }} MRU</span></div>
+          <div class="detail-item"><span class="detail-label">Date d'embauche</span><span class="detail-value">{{ viewingItem.hireDate | date:'dd/MM/yyyy' }}</span></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-modal-close" (click)="closeView()">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Historique -->
+  <div class="modal-overlay" *ngIf="viewingItem && showHistory" (click)="closeHistory()">
+    <div class="modal-card modal-history" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Historique — {{ viewingItem.firstName }} {{ viewingItem.lastName }}
+        </h3>
+        <button class="modal-close" (click)="closeHistory()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-loading" *ngIf="historyLoading">
+          <div class="loading-spinner"></div>
+          <span>Chargement de l'historique...</span>
+        </div>
+        <div class="history-empty" *ngIf="!historyLoading">
+          Aucun historique disponible pour cet employé.
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

@@ -1,7 +1,9 @@
 package com.mintrack.controllers.equipment;
 
 import com.mintrack.dto.common.PageResponseDto;
+import com.mintrack.entities.audit.AuditLog;
 import com.mintrack.entities.equipment.Equipment;
+import com.mintrack.service.audit.AuditLogService;
 import com.mintrack.service.equipment.EquipmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,11 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/equipment")
 @RequiredArgsConstructor
 public class EquipmentController {
     private final EquipmentService equipmentService;
+    private final AuditLogService auditLogService;
 
     @GetMapping
     public PageResponseDto<Equipment> getAll(
@@ -52,13 +57,17 @@ public class EquipmentController {
 
     @PostMapping
     public ResponseEntity<Equipment> create(@RequestBody Equipment equipment) {
-        return ResponseEntity.status(201).body(equipmentService.save(equipment));
+        Equipment saved = equipmentService.save(equipment);
+        auditLogService.logEntity(saved.getId(), "equipment", "CREATE", "name", null, saved.getName(), "system");
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Equipment> update(@PathVariable Integer id, @RequestBody Equipment equipment) {
         try {
-            return ResponseEntity.ok(equipmentService.update(id, equipment));
+            Equipment updated = equipmentService.update(id, equipment);
+            auditLogService.logEntity(id, "equipment", "UPDATE", "name", null, updated.getName(), "system");
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +75,13 @@ public class EquipmentController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        auditLogService.logEntity(id, "equipment", "DELETE", "name", "supprimé", null, "system");
         equipmentService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<AuditLog>> getHistory(@PathVariable Integer id) {
+        return ResponseEntity.ok(auditLogService.findByEntity(id, "equipment"));
     }
 }

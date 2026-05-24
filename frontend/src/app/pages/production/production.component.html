@@ -2,6 +2,16 @@
 
   <div class="page-header">
     <h1 class="page-title"><i class="fa-solid fa-file-lines"></i> Production</h1>
+    <div class="header-actions">
+      <button class="btn-add" (click)="openAdd()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Ajouter
+      </button>
+    </div>
   </div>
 
   <div *ngIf="loading" class="loading-state">
@@ -9,7 +19,12 @@
     <span>Chargement des données...</span>
   </div>
   <div *ngIf="error" class="error-msg">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" x2="12" y1="8" y2="12" />
+      <line x1="12" x2="12.01" y1="16" y2="16" />
+    </svg>
     {{ error }}
   </div>
 
@@ -25,7 +40,9 @@
             <span class="kpi-label">Enregistrements</span>
             <span class="kpi-value">{{ stats.total }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" style="width:100%"></div>
+          </div>
         </div>
       </div>
 
@@ -38,7 +55,9 @@
             <span class="kpi-label">Objectif total</span>
             <span class="kpi-value">{{ stats.totalTarget | number:'1.0-0' }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div>
+          </div>
         </div>
       </div>
 
@@ -51,7 +70,9 @@
             <span class="kpi-label">Réel total</span>
             <span class="kpi-value">{{ stats.totalActual | number:'1.0-0' }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.totalActual / (stats.totalTarget || 1)) * 100"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="(stats.totalActual / (stats.totalTarget || 1)) * 100"></div>
+          </div>
         </div>
       </div>
 
@@ -65,7 +86,10 @@
             <span class="kpi-value">{{ stats.efficiency | number:'1.1-1' }}</span>
             <span class="kpi-unit">%</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="stats.efficiency" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="stats.efficiency"
+              style="background:linear-gradient(90deg,#CE1126,#e63946);"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -75,7 +99,11 @@
         <h3><i class="fa-solid fa-list"></i> Journal de production</h3>
         <div class="panel-actions">
           <div class="search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
             <input type="text" [(ngModel)]="searchText" placeholder="Rechercher..." />
           </div>
           <span class="panel-badge">{{ filteredProduction.length }} entrées</span>
@@ -91,6 +119,7 @@
               <th>Réel</th>
               <th>Unité</th>
               <th>Notes</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -101,6 +130,20 @@
               <td class="actual-cell">{{ p.actual ?? '—' }}</td>
               <td><span class="unit-badge">{{ p.unit }}</span></td>
               <td class="notes-cell">{{ p.notes || '—' }}</td>
+              <td class="actions-cell">
+                <button class="action-btn action-history" (click)="viewHistory(p)" title="Historique">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </button>
+                <button class="action-btn action-view" (click)="viewItem(p)" title="Visualiser">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="action-btn action-edit" (click)="editItem(p)" title="Modifier">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="action-btn action-delete" (click)="confirmDelete(p)" title="Supprimer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2-2v2"/></svg>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -122,11 +165,8 @@
         <i class="fa-solid fa-chevron-left"></i> Précédent
       </button>
       <div class="page-numbers">
-        <button
-          *ngFor="let p of [].constructor(page.totalPages); let i = index"
-          class="page-num"
-          [class.active]="i === currentPage"
-          (click)="loadPage(i)">
+        <button *ngFor="let p of [].constructor(page.totalPages); let i = index" class="page-num"
+          [class.active]="i === currentPage" (click)="loadPage(i)">
           {{ i + 1 }}
         </button>
       </div>
@@ -136,4 +176,63 @@
     </div>
 
   </div>
+
+  <!-- Add Modal -->
+  <div class="modal-overlay" *ngIf="showAddModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          Saisir une Production
+        </h3>
+        <button class="modal-close" (click)="closeAdd()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveNew()">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Date de production</label>
+              <input type="date" [(ngModel)]="newItem.date" name="date" required>
+            </div>
+            <div class="form-group">
+              <label>Objectif visé</label>
+              <input type="number" [(ngModel)]="newItem.target" name="target" required>
+            </div>
+            <div class="form-group">
+              <label>Réel accompli</label>
+              <input type="number" [(ngModel)]="newItem.actual" name="actual" required>
+            </div>
+            <div class="form-group">
+              <label>Unité de mesure</label>
+              <select [(ngModel)]="newItem.unit" name="unit">
+                <option value="t">Tonnes (t)</option>
+                <option value="kg">Kilogrammes (kg)</option>
+                <option value="m3">Mètres cubes (m³)</option>
+                <option value="oz">Onces (oz)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ID Site Minier (Optionnel)</label>
+              <input type="number" [(ngModel)]="newItem.siteId" name="siteId" placeholder="ID du site">
+            </div>
+            <div class="form-group full-width">
+              <label>Notes / Observations</label>
+              <textarea [(ngModel)]="newItem.notes" name="notes" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeAdd()">Annuler</button>
+            <button type="submit" class="btn-save" [disabled]="saving">
+              <span *ngIf="saving" class="spinner-small"></span>
+              {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
