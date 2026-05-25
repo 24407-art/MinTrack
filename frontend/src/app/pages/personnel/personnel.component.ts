@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PersonnelService } from '../../core/services/personnel.service';
@@ -20,7 +20,15 @@ export class PersonnelComponent implements OnInit {
   pageSize = 10;
   searchText = '';
 
-  constructor(private personnelService: PersonnelService) {}
+  showAddModal = false;
+  saving = false;
+  newItem: Partial<Personnel> = {};
+
+  viewingItem: Personnel | null = null;
+  showHistory = false;
+  historyLoading = false;
+
+  constructor(private personnelService: PersonnelService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadPage();
@@ -30,8 +38,8 @@ export class PersonnelComponent implements OnInit {
     this.loading = true;
     this.currentPage = page;
     this.personnelService.getAll(page, this.pageSize).subscribe({
-      next: (res) => { this.page = res; this.loading = false; },
-      error: (err) => { this.error = err.error?.message || 'Erreur de chargement'; this.loading = false; }
+      next: (res) => { this.page = res; this.loading = false; this.cdr.detectChanges(); },
+      error: (err) => { this.error = err.error?.message || 'Erreur de chargement'; this.loading = false; this.cdr.detectChanges(); }
     });
   }
 
@@ -62,5 +70,86 @@ export class PersonnelComponent implements OnInit {
     const departments = new Set(list.map(p => p.department)).size;
     const avgSalary = list.length ? list.reduce((s, p) => s + (p.salary || 0), 0) / list.length : 0;
     return { total, active, departments, avgSalary };
+  }
+
+  openAdd(): void {
+    this.newItem = {
+      firstName: '', lastName: '', email: '', phone: '',
+      position: '', role: 'ouvrier', department: '', status: 'ACTIVE',
+      salary: 0, hireDate: new Date().toISOString().split('T')[0]
+    };
+    this.showAddModal = true;
+    this.cdr.detectChanges();
+  }
+
+  closeAdd(): void {
+    this.showAddModal = false;
+    this.error = '';
+    this.cdr.detectChanges();
+  }
+
+  saveNew(): void {
+    this.saving = true;
+    const req = this.newItem.id 
+      ? this.personnelService.update(this.newItem.id, this.newItem as Personnel)
+      : this.personnelService.create(this.newItem as Personnel);
+
+    req.subscribe({
+      next: () => {
+        this.saving = false;
+        this.cdr.detectChanges();
+        this.closeAdd();
+        this.personnelService.clearCache();
+        this.loadPage(this.currentPage);
+      },
+      error: (err) => {
+        this.saving = false;
+        this.error = err.error?.message || 'Erreur lors de l’enregistrement';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  viewHistory(item: any): void {
+    this.viewingItem = item;
+    this.showHistory = true;
+    this.historyLoading = true;
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.historyLoading = false;
+      this.cdr.detectChanges();
+    }, 400);
+  }
+
+  closeHistory(): void {
+    this.showHistory = false;
+    this.viewingItem = null;
+  }
+
+  viewItem(item: any): void {
+    this.viewingItem = item;
+    this.showHistory = false;
+  }
+
+  closeView(): void {
+    this.viewingItem = null;
+  }
+
+  editItem(item: any): void {
+    this.newItem = { ...item };
+    this.showAddModal = true;
+    this.cdr.detectChanges();
+  }
+
+  confirmDelete(item: any): void {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ' + item.lastName + ' ?')) {
+      this.personnelService.delete(item.id).subscribe({
+        next: () => {
+          this.personnelService.clearCache();
+          this.loadPage(this.currentPage);
+        },
+        error: (err) => alert('Erreur: ' + (err.error?.message || 'Suppression échouée'))
+      });
+    }
   }
 }

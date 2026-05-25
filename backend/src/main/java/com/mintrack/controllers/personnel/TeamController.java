@@ -1,8 +1,10 @@
 package com.mintrack.controllers.personnel;
 
 import com.mintrack.dto.common.PageResponseDto;
+import com.mintrack.entities.audit.AuditLog;
 import com.mintrack.entities.personnel.Personnel;
 import com.mintrack.entities.personnel.Team;
+import com.mintrack.service.audit.AuditLogService;
 import com.mintrack.service.personnel.PersonnelService;
 import com.mintrack.service.personnel.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class TeamController {
     private final TeamService teamService;
     private final PersonnelService personnelService;
+    private final AuditLogService auditLogService;
 
     @GetMapping
     public PageResponseDto<Team> getAll(
@@ -97,13 +100,17 @@ public class TeamController {
 
     @PostMapping
     public ResponseEntity<Team> create(@RequestBody Team team) {
-        return ResponseEntity.status(201).body(teamService.save(team));
+        Team saved = teamService.save(team);
+        auditLogService.logEntity(saved.getId(), "team", "CREATE", "name", null, saved.getName(), "system");
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Team> update(@PathVariable Integer id, @RequestBody Team team) {
         try {
-            return ResponseEntity.ok(teamService.update(id, team));
+            Team updated = teamService.update(id, team);
+            auditLogService.logEntity(id, "team", "UPDATE", "name", null, updated.getName(), "system");
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -111,8 +118,14 @@ public class TeamController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        auditLogService.logEntity(id, "team", "DELETE", "name", "supprimé", null, "system");
         teamService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<AuditLog>> getHistory(@PathVariable Integer id) {
+        return ResponseEntity.ok(auditLogService.findByEntity(id, "team"));
     }
 
     @PostMapping("/{teamId}/members/{personnelId}")

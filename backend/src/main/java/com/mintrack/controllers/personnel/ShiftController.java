@@ -1,7 +1,9 @@
 package com.mintrack.controllers.personnel;
 
 import com.mintrack.dto.common.PageResponseDto;
+import com.mintrack.entities.audit.AuditLog;
 import com.mintrack.entities.personnel.Shift;
+import com.mintrack.service.audit.AuditLogService;
 import com.mintrack.service.personnel.ShiftService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,11 +13,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/shifts")
 @RequiredArgsConstructor
 public class ShiftController {
     private final ShiftService shiftService;
+    private final AuditLogService auditLogService;
 
     @GetMapping
     public PageResponseDto<Shift> getAll(
@@ -44,13 +49,17 @@ public class ShiftController {
 
     @PostMapping
     public ResponseEntity<Shift> create(@RequestBody Shift shift) {
-        return ResponseEntity.status(201).body(shiftService.save(shift));
+        Shift saved = shiftService.save(shift);
+        auditLogService.logEntity(saved.getId(), "shift", "CREATE", "name", null, saved.getName(), "system");
+        return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Shift> update(@PathVariable Integer id, @RequestBody Shift shift) {
         try {
-            return ResponseEntity.ok(shiftService.update(id, shift));
+            Shift updated = shiftService.update(id, shift);
+            auditLogService.logEntity(id, "shift", "UPDATE", "name", null, updated.getName(), "system");
+            return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -58,7 +67,13 @@ public class ShiftController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        auditLogService.logEntity(id, "shift", "DELETE", "name", "supprimé", null, "system");
         shiftService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/history")
+    public ResponseEntity<List<AuditLog>> getHistory(@PathVariable Integer id) {
+        return ResponseEntity.ok(auditLogService.findByEntity(id, "shift"));
     }
 }

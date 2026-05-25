@@ -3,6 +3,16 @@
   <!-- En-tête -->
   <div class="page-header">
     <h1 class="page-title"><i class="fa-solid fa-cube"></i> Équipements</h1>
+    <div class="header-actions">
+      <button class="btn-add" (click)="openAdd()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Ajouter
+      </button>
+    </div>
   </div>
 
   <!-- Chargement / Erreur -->
@@ -11,7 +21,12 @@
     <span>Chargement des équipements...</span>
   </div>
   <div *ngIf="error" class="error-msg">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" x2="12" y1="8" y2="12" />
+      <line x1="12" x2="12.01" y1="16" y2="16" />
+    </svg>
     {{ error }}
   </div>
 
@@ -28,7 +43,9 @@
             <span class="kpi-label">Total équipements</span>
             <span class="kpi-value">{{ stats.total }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" style="width:100%"></div>
+          </div>
         </div>
       </div>
 
@@ -41,7 +58,10 @@
             <span class="kpi-label">Actifs</span>
             <span class="kpi-value">{{ stats.active }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.active / stats.total) * 100" style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="(stats.active / stats.total) * 100"
+              style="background:linear-gradient(90deg,#FFD700,#9a7d00);"></div>
+          </div>
         </div>
       </div>
 
@@ -54,7 +74,10 @@
             <span class="kpi-label">En panne</span>
             <span class="kpi-value">{{ stats.broken }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.broken / stats.total) * 100" style="background:linear-gradient(90deg,#CE1126,#e63946);"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="(stats.broken / stats.total) * 100"
+              style="background:linear-gradient(90deg,#CE1126,#e63946);"></div>
+          </div>
         </div>
       </div>
 
@@ -67,7 +90,9 @@
             <span class="kpi-label">Maintenance</span>
             <span class="kpi-value">{{ stats.maintenance }}</span>
           </div>
-          <div class="kpi-bar"><div class="kpi-bar-fill" [style.width.%]="(stats.maintenance / stats.total) * 100"></div></div>
+          <div class="kpi-bar">
+            <div class="kpi-bar-fill" [style.width.%]="(stats.maintenance / stats.total) * 100"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -78,7 +103,11 @@
         <h3><i class="fa-solid fa-list"></i> Liste des équipements</h3>
         <div class="panel-actions">
           <div class="search-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
             <input type="text" [(ngModel)]="searchText" placeholder="Rechercher..." />
           </div>
           <span class="panel-badge">{{ filteredEquipment.length }} entrées</span>
@@ -94,6 +123,7 @@
               <th>Série</th>
               <th>Statut</th>
               <th>Dernière maintenance</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -104,6 +134,20 @@
               <td><code>{{ e.serial }}</code></td>
               <td><span class="status-badge" [class]="e.status">{{ e.status }}</span></td>
               <td>{{ e.lastMaintenance ? (e.lastMaintenance | date:'dd/MM/yy HH:mm') : '—' }}</td>
+              <td class="actions-cell">
+                <button class="action-btn action-history" (click)="viewHistory(e)" title="Historique">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </button>
+                <button class="action-btn action-view" (click)="viewItem(e)" title="Visualiser">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+                <button class="action-btn action-edit" (click)="editItem(e)" title="Modifier">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+                <button class="action-btn action-delete" (click)="confirmDelete(e)" title="Supprimer">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -126,11 +170,8 @@
         <i class="fa-solid fa-chevron-left"></i> Précédent
       </button>
       <div class="page-numbers">
-        <button
-          *ngFor="let p of [].constructor(page.totalPages); let i = index"
-          class="page-num"
-          [class.active]="i === currentPage"
-          (click)="loadPage(i)">
+        <button *ngFor="let p of [].constructor(page.totalPages); let i = index" class="page-num"
+          [class.active]="i === currentPage" (click)="loadPage(i)">
           {{ i + 1 }}
         </button>
       </div>
@@ -140,4 +181,74 @@
     </div>
 
   </div>
+
+  <!-- Add Modal -->
+  <div class="modal-overlay" *ngIf="showAddModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+          </svg>
+          Ajouter un Équipement
+        </h3>
+        <button class="modal-close" (click)="closeAdd()">×</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveNew()">
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Nom ou Désignation</label>
+              <input type="text" [(ngModel)]="newItem.name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label>Type d'équipement</label>
+              <select [(ngModel)]="newItem.type" name="type" required>
+                <option value="EXCAVATOR">Excavatrice</option>
+                <option value="TRUCK">Camion (Haulpak, etc)</option>
+                <option value="DRILLER">Foreuse</option>
+                <option value="CRUSHER">Concasseur</option>
+                <option value="LOADER">Chargeuse</option>
+                <option value="OTHER">Autre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Statut</label>
+              <select [(ngModel)]="newItem.status" name="status">
+                <option value="ACTIVE">Actif / Opérationnel</option>
+                <option value="MAINTENANCE">En maintenance</option>
+                <option value="BROKEN">En panne</option>
+                <option value="RETIRED">Réformé</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Numéro de modèle</label>
+              <input type="text" [(ngModel)]="newItem.model" name="model" required>
+            </div>
+            <div class="form-group">
+              <label>Numéro de série / Châssis</label>
+              <input type="text" [(ngModel)]="newItem.serial" name="serial" required>
+            </div>
+            <div class="form-group">
+              <label>ID Site d'affectation</label>
+              <input type="number" [(ngModel)]="newItem.siteId" name="siteId">
+            </div>
+            <div class="form-group">
+              <label>Date d'acquisition</label>
+              <input type="date" [(ngModel)]="newItem.purchaseDate" name="purchaseDate" required>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeAdd()">Annuler</button>
+            <button type="submit" class="btn-save" [disabled]="saving">
+              <span *ngIf="saving" class="spinner-small"></span>
+              {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
 </div>
