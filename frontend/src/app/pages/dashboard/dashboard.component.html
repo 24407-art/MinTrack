@@ -1,6 +1,5 @@
 <div class="dashboard">
 
-  <!-- En-tête -->
   <div class="dashboard-header">
     <h1 class="dashboard-title">Tableau de <span>bord</span></h1>
     <div class="date-pill">
@@ -9,7 +8,6 @@
     </div>
   </div>
 
-  <!-- Chargement / Erreur -->
   <div *ngIf="loading" class="loading-state">
     <div class="loading-spinner"></div>
     <span>Chargement des données...</span>
@@ -19,7 +17,6 @@
     {{ error }}
   </div>
 
-  <!-- Onglets -->
   <nav class="tab-bar" *ngIf="!loading && !error">
     <button
       *ngFor="let tab of tabs"
@@ -32,12 +29,8 @@
     </button>
   </nav>
 
-  <!-- ============================================
-       ONGLET : VUE D'ENSEMBLE
-       ============================================ -->
   <div *ngIf="activeTab === 'overview' && data" class="tab-content">
 
-    <!-- Cartes KPI 3D -->
     <div class="kpi-grid">
       <div class="kpi-card" style="--card-color:#006233; --card-bg:rgba(0,98,51,0.06);">
         <div class="kpi-inner">
